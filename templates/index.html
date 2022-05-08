@@ -8,12 +8,34 @@
     </head>
     <body>
         <script>
+            function IsJsonString(str) {
+                if(str == '')
+                        return false;
+                else
+                    try {
+                        json_conf = JSON.parse(str);
+                        if (json_conf.reviewers.length < 1 || json_conf.submissions.length < 1 ||  json_conf.n_max_reviewer == undefined)
+                                return false;
+                    } catch (e) {
+                        return false;
+                    }
+                return true;
+            }
+
             function submitform(){
+
+                if (!IsJsonString(document.getElementById('json_config').value)){
+                   document.getElementById('response_text').innerHTML = '<h2>Please fill in the the field above with a JSON configuration (see format below)</h2>';
+                   document.getElementById('json_config').focus();
+                   return;
+                }
+
+
                 console.log("Sending Json");
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
-                       document.getElementById('response_text').innerHTML = 'Review Assignment Results: <p>' + xhr.responseText
+                       document.getElementById('response_text').innerHTML = '<h2>Review Assignment Result:</h2>' + xhr.responseText;
                     }
                 }
                 xhr.open(input_form.method, window.location.href, true);
@@ -75,7 +97,8 @@
 
         <form class="form-container" action="http://peerlogic.csc.ncsu.edu/reviewer_assignment/" method="POST" name="input_form">
             <div class="form-title"><h2>Reviewer Assignment</h2></div>
-            <div class="form-title">Enter a JSON Configuration to assign reviews</div>
+            <div class="form-title">Enter a JSON Configuration to assign reviewers</div>
+            <div class="form-title">Choose algorithm : <a href="/random">Random</a>, <a href="/preference">Preference</a>, <a href="/reputation">Reputation</a></div>
             <div class="form-title">TODO: link to a documentation</div>
             <p><textarea rows="50" cols="160"  name="json config" id="json_config" class="form-field"></textarea></p>
             <p><button type="button"  class="submit-button" onclick="submitform()">Go get the review assignment!</button></p>

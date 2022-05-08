@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 import random
 import flask
 import numpy
@@ -221,7 +221,7 @@ def assign_reviews_preference(submissions, reviewers, n_max_reviewer):
 
 
 @app.route('/sample/<algorithm>', methods=['GET', 'POST'])
-def sample(algorithm):
+def assign_algorithm_sample_data(algorithm):
     if request.method == 'GET':
         submissions = [{'submission_id':'S00', 'conflicts':['R01']},
                        {'submission_id':'S01', 'conflicts':['R02']},
@@ -263,8 +263,13 @@ def sample(algorithm):
     return assignment
 
 
+@app.route('/', methods=['GET'])
+def index():
+    return redirect("/random", code=302)
+
+
 @app.route('/<algorithm>', methods=['GET', 'POST'])
-def hello_world(algorithm):
+def assign_algorithm(algorithm):
     if request.method == 'GET':
         return render_template("index.html")
     else:
